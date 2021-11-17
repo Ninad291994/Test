@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS Ticket_Status_Stats;
 DROP TABLE IF EXISTS temp_table;
+DROP TRIGGER IF EXISTS UPDATE_STATUS_TIME_TRIGGER;
 
 CREATE TABLE IF NOT EXISTS Ticket_Status_Stats (
                                         id INTEGER PRIMARY KEY,
@@ -31,7 +32,7 @@ SELECT T.ticket_id AS ticket_id, T.activity_id AS activity_id, (CASE WHEN T.Stat
 FROM temp_table AS T;
 
 
-CREATE TRIGGER UPDATE_STATUS_TIME_TRIGGER
+CREATE TRIGGER IF NOT EXISTS UPDATE_STATUS_TIME_TRIGGER
    AFTER UPDATE OF status ON Activity
    WHEN OLD.status <> NEW.status
 BEGIN 
