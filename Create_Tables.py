@@ -12,6 +12,9 @@ import numpy as np
 import argparse
 import sys
 
+# In Sqlite if INT larger than 8 byte, it gets stored as BLOB object. 
+# To avoid that sqlite must adapt to python int types using below code.
+
 sqlite3.register_adapter(np.int64, lambda val: int(val))
 sqlite3.register_adapter(np.int32, lambda val: int(val))
 
@@ -35,6 +38,7 @@ def create_dataframes_from_json(json_file):
     df_temp = pd.json_normalize(df_tickets["activity"])
     df_activity = pd.concat([df_tickets[["ticket_id"]], df_temp], axis=1)
     
+    # Slicing dataframes to keep only necessary columns
     df_note = df_activity[["ticket_id", "Note.id", "Note.type", "Note.description"]]
     
     df_tickets = df_tickets[["ticket_id", "performer_id", "performed_at", "performer_type"]]
@@ -45,7 +49,8 @@ def create_dataframes_from_json(json_file):
 
 
     df_activity = df_activity[df_activity['shipping_address'].notna()]
-
+    
+    # Removing ticket activity rows that dont have notes
     df_note = df_note[df_note['Note.id'].notna()]
     
     return df_metadata, df_tickets, df_activity, df_note
@@ -55,7 +60,7 @@ def create_dataframes_from_json(json_file):
 
 
 def create_connection(db_file):
-    """ create a database connection to a SQLite database """
+    # create a database connection to a SQLite database
     conn = None
     try:
         conn = sqlite3.connect(db_file)
