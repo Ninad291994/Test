@@ -11,7 +11,7 @@ import argparse
 import json
 import string
 
-random.seed(1)
+#random.seed(1)
 
 
 # In[ ]:
